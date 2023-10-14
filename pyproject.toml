@@ -1,0 +1,7 @@
+[tool.poetry]
+name = "ALEX-UI"
+version = "0.0.0"
+description = "ALEX UI is a python library for the ALEX user interface."
+authors = ["Yassin Kortam"]
+license = "MIT"
+readme = "README.md"
