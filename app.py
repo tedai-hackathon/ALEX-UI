@@ -7,6 +7,9 @@ from alex.components import setup
 if "alex" not in st.session_state:
     st.session_state.alex = Alex()
 
+if "finished_setup" not in st.session_state:
+    st.session_state.finished_setup = False
+
 alex = st.session_state.alex
 
 st.title("Alex")
@@ -21,7 +24,12 @@ if "current_page" not in st.session_state:
 st.session_state.current_page = selected_page
 
 if st.session_state.current_page == "Setup":
-    setup(alex.setup_questions, alex)
+    if not st.session_state.finished_setup:
+        st.session_state.answers = setup(alex.setup_questions, alex)
+    else:
+        st.write("You have already finished the setup process.")
+        st.write("Here are your answers:")
+        st.write(st.session_state.answers)
 
 if st.session_state.current_page == "Chat":
     if "messages" not in st.session_state:

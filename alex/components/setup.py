@@ -3,9 +3,6 @@ import streamlit as st
 
 
 def setup(questions: Dict[str, dict], alex):
-    if st.session_state.get("select_pressed", False):
-        return questions
-
     # Initialize the current question index in the session state if it doesn't exist
     if "current_question_index" not in st.session_state:
         st.session_state.current_question_index = 0
