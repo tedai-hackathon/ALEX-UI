@@ -1,11 +1,4 @@
-def chat():
-    def bot_response(user_message):
-        if "[Download PDF]" in user_message:
-            pdf_url = user_message.split("](", 1)[1].split(")", 1)[0]
-            return f"Bot: You shared a PDF. [Download PDF]({pdf_url})"
-        else:
-            return f"Bot: You said '{user_message}'"
-
+def chatPage():
     # Sidebar
     with st.sidebar:
         st.empty()
@@ -31,20 +24,29 @@ def chat():
 
         if agree:
             st.write("Great!")
-
     # Chat
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
 
+    chat_bot = Chat(docs_dir="docs", db_dir="db", urls=["https://apple.com"])
+    
+    # Create a Streamlit container for the chat interface
     chat_container = st.container()
+    
     user_input = st.text_input("You:", "")
+    
     if st.button("Send"):
         user_message = user_input.strip()
         st.session_state.chat_history.append(f"You: {user_message}")
-        bot_reply = bot_response(user_message)
-        st.session_state.chat_history.append(bot_reply)
+        
+        try:
+            # Call the chat method of the Chat object to get a response
+            bot_reply = chat_bot.chat(user_message)
+            st.session_state.chat_history.append(f"Bot: {bot_reply}")
+        except Exception as e:
+            # Log and display any errors that occur during the AI interaction
+            st.session_state.chat_history.append(f"Bot Error: {str(e)}")
 
     uploaded_file = st.file_uploader("Upload a File", type=["pdf"])
+    
     if uploaded_file:
         st.session_state.chat_history.append("User uploaded a file.")
 
