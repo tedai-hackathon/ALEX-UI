@@ -1,4 +1,4 @@
-def Dashboard():
+def dashboard():
     data = {
         "Company Name": [
             "Company A",
