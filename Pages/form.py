@@ -1,12 +1,21 @@
-def form():
+def Form():
     st.title("Questionnaire")
     st.text("Please fill out the following form")
 
     with st.form("alex"):
+
+        full_name = st.text_input("Please state your name (FIRST,LAST)")
+
+        if ',' in full_name:
+            myBusiness.ownerFirstName = full_name.split(",")[0].strip()
+            myBusiness.ownerLastName = full_name.split(",")[1].strip()
+        else:
+            st.warning("Please enter your name in the format 'FIRST,LAST'.")
+
         myBusiness.name = st.text_input("What is the name of your business?")
         myBusiness.address = st.text_input("What's your physical business address?")
         myBusiness.has_ip = st.text_input(
-            "Does your business own any intellectual property?"
+            "Does your business own any intellectual property (Patents, trademarks, etc.)?"
         )
         myBusiness.explanation = st.text_input(
             "Please explain what your business will do."
