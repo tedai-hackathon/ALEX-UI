@@ -5,6 +5,39 @@ import dashboard
 import form
 import setUpWizard
 
+# BUSINESS DATATYPE
+class Business:
+    def __init__(self):
+        self.name = ""
+        self.business_type = ""
+        self.address = ""
+        self.has_ip = ""
+        self.explanation = ""
+        self.goals = ""
+        self.singleOrMulti = ""
+        self.managers = []
+        self.kpiData = []
+        self.terms = []
+        self.isNonProfit = False
+
+    def add_manager(self, manager_name, percentage):
+        self.managers.append({"name": manager_name, "percentage": percentage})
+
+    def add_kpi(self, kpi_name, current_value, target_value):
+        self.kpiData.append(
+            {
+                "name": kpi_name,
+                "current_value": current_value,
+                "target_value": target_value,
+            }
+        )
+
+    def add_kpi_data(self, kpi_name, percentage):
+        self.kpiData.append({"name": kpi_name, "percentage": percentage})
+
+    def add_organization_term(self, term):
+        self.terms.append(term)
+
 # PAGE CONDITIONAL FOR CHANGING PAGES BASED ON SELECTION
 def pageConditional():
     global selected_page
