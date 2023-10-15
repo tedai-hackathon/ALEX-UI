@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
 
-page_names = ["Home", "Chat", "Dashboard", "Form", "Setup Wizard"]
-selected_page = "Home"
 
-
+# OBJECT FOR DATA CLASSIFICATIONS
 class Business:
     def __init__(self):
         self.name = ""
@@ -15,7 +13,7 @@ class Business:
         self.goals = ""
         self.singleOrMulti = ""
         self.managers = []
-        self.kpis = []
+        self.kpiData = []
         self.terms = []
         self.isNonProfit = False
 
@@ -23,7 +21,7 @@ class Business:
         self.managers.append({"name": manager_name, "percentage": percentage})
 
     def add_kpi(self, kpi_name, current_value, target_value):
-        self.kpis.append(
+        self.kpiData.append(
             {
                 "name": kpi_name,
                 "current_value": current_value,
@@ -35,17 +33,19 @@ class Business:
         self.kpiData.append({"name": kpi_name, "percentage": percentage})
 
     def add_organization_term(self, term):
-        self.organization_terms.append(term)
+        self.terms.append(term)
 
 
+# FUNCTIONS FOR EACH PAGE
 def setUpWizard(isForm):
     st.title("Setup Wizard")
     st.text(
-        "The setup wizard will help you to decide the optimal business"
-        + "structure for your business. You may override its sugegstion."
+        "The setup wizard will help you decide the optimal business"
+        + "structure for your business."
+        + "You may override its suggestion."
     )
 
-    all_business_types = ["LLC", "S-CORP", "C-CORP", "501c3", "Sole Propetiership"]
+    all_business_types = ["LLC", "S-CORP", "C-CORP", "501c3", "Sole Proprietorship"]
     optimal_business_type = "To be determined"
     selected_type = st.selectbox(
         "Select Business Type",
@@ -76,7 +76,6 @@ def setUpWizard(isForm):
                 selected_terms.append(nonProfitType)
 
             if isNonprofit == "No":
-                local_selected_terms = []
                 myBusiness.isNonProfit = False
             else:
                 myBusiness.isNonProfit = True
@@ -110,11 +109,12 @@ def setUpWizard(isForm):
                 for term in term_options:
                     selected = st.checkbox(term)
                     if selected:
-                        local_selected_terms.append(term)
+                        selected_terms.append(term)
 
-                st.write("Selected Terms:", local_selected_terms)
+                st.write("Selected Terms:", selected_terms)
             submit = st.form_submit_button("Submit")
-            st.text(submit)
+            if submit:
+                st.text("Form submitted")
 
             myBusiness.terms = selected_terms
     else:
@@ -139,8 +139,6 @@ def setUpWizard(isForm):
             selected_terms.append(nonProfitType)
 
         if isNonprofit == "No":
-            local_selected_terms = []
-
             term_options = [
                 "operating-agreement",
                 "manager-managed",
@@ -170,9 +168,9 @@ def setUpWizard(isForm):
             for term in term_options:
                 selected = st.checkbox(term)
                 if selected:
-                    local_selected_terms.append(term)
+                    selected_terms.append(term)
 
-            st.write("Selected Terms:", local_selected_terms)
+            st.write("Selected Terms:", selected_terms)
 
 
 def Form():
@@ -209,10 +207,10 @@ def Form():
             )
             if ccorp_type == "Multi-Member":
                 st.header("Type Stakeholders' names & percentage of the company")
-                myBusiness.addManager(st.text_input("Person 1"))
-                myBusiness.addManager(st.text_input("Person 2"))
-                myBusiness.addManager(st.text_input("Person 3"))
-                myBusiness.addManager(st.text_input("Person 4"))
+                myBusiness.add_manager(st.text_input("Person 1"), 0)
+                myBusiness.add_manager(st.text_input("Person 2"), 0)
+                myBusiness.add_manager(st.text_input("Person 3"), 0)
+                myBusiness.add_manager(st.text_input("Person 4"), 0)
         if business_type == "S-CORP":
             scorp_type = st.selectbox(
                 "Is your S-CORP a multi-member or single member",
@@ -220,18 +218,18 @@ def Form():
             )
             if scorp_type == "Multi-Member":
                 st.header("Type Stakeholders' names & percentage of the company")
-                myBusiness.addManager(st.text_input("Person 1"))
-                myBusiness.addManager(st.text_input("Person 2"))
-                myBusiness.addManager(st.text_input("Person 3"))
-                myBusiness.addManager(st.text_input("Person 4"))
+                myBusiness.add_manager(st.text_input("Person 1"), 0)
+                myBusiness.add_manager(st.text_input("Person 2"), 0)
+                myBusiness.add_manager(st.text_input("Person 3"), 0)
+                myBusiness.add_manager(st.text_input("Person 4"), 0)
         if business_type == "501c3":
             st.header(
                 "Please declare all members on your board of directors (3 minimum)"
             )
-            myBusiness.addManager(st.text_input("Person 1"))
-            myBusiness.addManager(st.text_input("Person 2"))
-            myBusiness.addManager(st.text_input("Person 3"))
-            myBusiness.addManager(st.text_input("Person 4"))
+            myBusiness.add_manager(st.text_input("Person 1"), 0)
+            myBusiness.add_manager(st.text_input("Person 2"), 0)
+            myBusiness.add_manager(st.text_input("Person 3"), 0)
+            myBusiness.add_manager(st.text_input("Person 4"), 0)
         if business_type == "LLC":
             llc_type = st.selectbox(
                 "Is your LLC a multi-member or single member",
@@ -239,10 +237,10 @@ def Form():
             )
             if llc_type == "Multi-Member":
                 st.text("Type Stakeholders' names & percentage of the company")
-                myBusiness.addManager(st.text_input("Person 1"))
-                myBusiness.addManager(st.text_input("Person 2"))
-                myBusiness.addManager(st.text_input("Person 3"))
-                myBusiness.addManager(st.text_input("Person 4"))
+                myBusiness.add_manager(st.text_input("Person 1"), 0)
+                myBusiness.add_manager(st.text_input("Person 2"), 0)
+                myBusiness.add_manager(st.text_input("Person 3"), 0)
+                myBusiness.add_manager(st.text_input("Person 4"), 0)
 
         st.form_submit_button("Submit")
 
@@ -341,17 +339,18 @@ def Dashboard():
         st.info("No similar companies found based on your criteria.")
 
     # KPIS
-    kpi_data = {
-        "KPI Name": ["Revenue", "Profit Margin", "Customer Satisfaction", "Churn Rate"],
-        "Current Value": [1000000, 0.25, 90, 5],
-        "Target Value": [1200000, 0.30, 95, 4],
-    }
+    kpi_data = myBusiness.kpiData
     df = pd.DataFrame(kpi_data)
-    df["Percentage"] = (df["Current Value"] / df["Target Value"] * 100).apply(
-        lambda x: f"{x:.2f}"
-    )
-    st.header("Key Performance Indicators (KPIs) for Your Business")
-    st.table(df)
+
+    if not df.empty:
+        # Calculate the "Percentage" column if the DataFrame is not empty
+        df["Percentage"] = (df["current_value"] / df["target_value"] * 100).apply(
+            lambda x: f"{x:.2f}"
+        )
+        st.header("Key Performance Indicators (KPIs) for Your Business")
+        st.table(df)
+    else:
+        st.info("No KPI data available.")
 
     # DOCUMENTATION
     def download_pdf(pdf_data, filename):
@@ -364,39 +363,36 @@ def Dashboard():
 
     st.header("Documentation")
     col1, col2, col3 = st.columns(3)
-    st.markdown("<style>.css-16a0wkx { padding: 0; }</style>", unsafe_allow_html=True)
     if col1.button("  Filing Form  "):
         with open("path_to_filing_form.pdf", "rb") as file:
             pdf_data = file.read()
-        col1.markdown(download_pdf(pdf_data, "Filing Form"), unsafe_allow_html=True)
+        download_pdf(pdf_data, "Filing Form")
 
     if col2.button("  Bylaws  "):
         with open("path_to_operating_agreement.pdf", "rb") as file:
             pdf_data = file.read()
-        col2.markdown(
-            download_pdf(pdf_data, "Operating Agreement / Bylaws"),
-            unsafe_allow_html=True,
-        )
+        download_pdf(pdf_data, "Operating Agreement / Bylaws")
 
     if col3.button("  Certificate of Good Standing  "):
         with open("path_to_certificate_of_good_standing.pdf", "rb") as file:
             pdf_data = file.read()
-        col3.markdown(
-            download_pdf(pdf_data, "Certificate of Good Standing"),
-            unsafe_allow_html=True,
-        )
+        download_pdf(pdf_data, "Certificate of Good Standing")
 
 
+# PAGE CONDITIONAL FOR CHANGING PAGES BASED ON SELECTION
 def pageConditional():
+    global selected_page
     page_names = ["Home", "Chat", "Dashboard", "Form", "Setup Wizard"]
-    selected_page = "Home"
+
+    if selected_page == "Home":
+        selected_page = st.selectbox("Select a page:", page_names, key="select_page")
 
     if selected_page == "Home":
         st.write(
             '<div style="display: flex; justify-content: center;">',
             unsafe_allow_html=True,
         )
-        selected_page = st.selectbox("Select a page:", page_names, key="select_page")
+
     if selected_page == "Chat":
         Chat()
     elif selected_page == "Dashboard":
@@ -407,5 +403,18 @@ def pageConditional():
         setUpWizard(True)
 
 
+# BUSINESS KPI INITIALIZATION PLACEHOLDER
 myBusiness = Business()
+myBusiness.add_kpi("User Engagement", 1000, 1500)
+myBusiness.add_kpi("App Downloads", 5000, 8000)
+myBusiness.add_kpi("Daily Active Users (DAU)", 2000, 3000)
+myBusiness.add_kpi("User Retention Rate", 85, 90)
+myBusiness.add_kpi("User Acquisition Cost", 2.5, 2.0)
+myBusiness.add_kpi("Monthly Revenue", 15000, 20000)
+myBusiness.add_kpi("Bug Fix Response Time", 3, 2)
+myBusiness.add_kpi("Feature Release Frequency", 1, 2)
+
+page_names = ["Home", "Chat", "Dashboard", "Form", "Setup Wizard"]
+selected_page = "Home"
+
 pageConditional()
