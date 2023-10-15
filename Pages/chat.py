@@ -1,4 +1,4 @@
-def Chat():
+def chat():
     def bot_response(user_message):
         if "[Download PDF]" in user_message:
             pdf_url = user_message.split("](", 1)[1].split(")", 1)[0]
