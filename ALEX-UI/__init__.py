@@ -5,6 +5,10 @@ import dashboard
 import form
 import setUpWizard
 
+# CHAT INITIALIZATION
+if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    
 # BUSINESS DATATYPE
 class Business:
     def __init__(self):
