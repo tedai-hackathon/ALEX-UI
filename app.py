@@ -1,9 +1,12 @@
 import streamlit as st
 import time
 import os
+import json
+import re
 
 from alex import Alex
 from alex.components import setup
+from alex.prompts import legal_prompt_template
 
 if "alex" not in st.session_state:
     st.session_state.alex = Alex()
@@ -27,6 +30,7 @@ if "current_page" not in st.session_state:
 
 st.session_state.current_page = selected_page
 
+######################### SETUP PAGE #########################
 if st.session_state.current_page == "Setup":
     if not st.session_state.finished_setup:
         st.session_state.answers = setup(alex.setup_questions, alex)
@@ -52,7 +56,7 @@ if st.session_state.current_page == "Setup":
             )
             st.file_uploader(label="Upload Signed Form")
 
-
+######################### CHAT PAGE #########################
 if st.session_state.current_page == "Chat":
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -68,15 +72,26 @@ if st.session_state.current_page == "Chat":
 
         with st.chat_message("Alex"):
             message_placeholder = st.empty()
+            legal_entity_json = json.dumps(alex.entity)
+            full_prompt = legal_prompt_template.format(
+                legal_entity_json=legal_entity_json, founder_question=prompt
+            )
             full_response = ""
-            assistant_response = alex.chat(prompt)
+            print(full_prompt)
+            assistant_response = alex.chat(full_prompt)
             # Simulate stream of response with milliseconds delay
-            for chunk in assistant_response.split():
+            for chunk in re.split(r"( )", assistant_response["result"]):
                 full_response += chunk + " "
                 time.sleep(0.05)
                 # Add a blinking cursor to simulate typing
                 message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
+
+            sources_md = ""
+            if "source_documents" in assistant_response:
+                sources_md = "\n\n**Sources:**\n"
+                for i, source in enumerate(assistant_response["source_documents"]):
+                    sources_md += f"- [source {i}]({source.metadata['source']})\n"
+            message_placeholder.markdown(full_response + sources_md)
         # Add assistant response to chat history
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
