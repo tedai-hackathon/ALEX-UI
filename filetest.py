@@ -4,14 +4,253 @@ import pandas as pd
 page_names = ["Home", "Chat", "Dashboard", "Form", "Setup Wizard"]
 selected_page = "Home"
 
-if selected_page == "Home":
-    st.write(
-        '<div style="display: flex; justify-content: center;">', unsafe_allow_html=True
+
+class Business:
+    def __init__(self):
+        self.name = ""
+        self.business_type = ""
+        self.address = ""
+        self.has_ip = ""
+        self.explanation = ""
+        self.goals = ""
+        self.singleOrMulti = ""
+        self.managers = []
+        self.kpis = []
+        self.terms = []
+        self.isNonProfit = False
+
+    def add_manager(self, manager_name, percentage):
+        self.managers.append({"name": manager_name, "percentage": percentage})
+
+    def add_kpi(self, kpi_name, current_value, target_value):
+        self.kpis.append(
+            {
+                "name": kpi_name,
+                "current_value": current_value,
+                "target_value": target_value,
+            }
+        )
+
+    def add_kpi_data(self, kpi_name, percentage):
+        self.kpiData.append({"name": kpi_name, "percentage": percentage})
+
+    def add_organization_term(self, term):
+        self.organization_terms.append(term)
+
+
+def setUpWizard(isForm):
+    st.title("Setup Wizard")
+    st.text(
+        "The setup wizard will help you to decide the optimal business"
+        + "structure for your business. You may override its sugegstion."
     )
-    selected_page = st.selectbox("Select a page:", page_names, key="select_page")
 
-if selected_page == "Chat":
+    all_business_types = ["LLC", "S-CORP", "C-CORP", "501c3", "Sole Propetiership"]
+    optimal_business_type = "To be determined"
+    selected_type = st.selectbox(
+        "Select Business Type",
+        [optimal_business_type]
+        + [type for type in all_business_types if type != optimal_business_type],
+    )
+    st.write(f"Selected Business Type: {selected_type}")
+    if isForm:
+        with st.form("wizard"):
+            selected_terms = []
+            isNonprofit = st.selectbox(
+                "Is your organization a nonprofit",
+                (
+                    "Yes",
+                    "No",
+                ),
+            )
 
+            if isNonprofit == "Yes":
+                nonProfitType = st.selectbox(
+                    "What type of nonprofit are you making?",
+                    (
+                        "Religious",
+                        "public-benefit",
+                    ),
+                )
+                selected_terms.append("non-profit")
+                selected_terms.append(nonProfitType)
+
+            if isNonprofit == "No":
+                local_selected_terms = []
+                myBusiness.isNonProfit = False
+            else:
+                myBusiness.isNonProfit = True
+
+                term_options = [
+                    "operating-agreement",
+                    "manager-managed",
+                    "member-managed",
+                    "board",
+                    "partnership-agreement",
+                    "partnership",
+                    "limited-partner",
+                    "stock",
+                    "informal",
+                    "small business partnership",
+                    "family",
+                    "restrict-resignation",
+                    "restrict-transferable-interests-assets",
+                    "transferable-interests-assets",
+                    "mutual-benefit",
+                    "public-benefit",
+                    "restrict-dissolution",
+                    "liable-partner",
+                    "automated-management",
+                    "smart-contract",
+                    "restrict-return-capital-contributions",
+                    "blockchain",
+                ]
+
+                st.write("Select the terms you want to classify:")
+                for term in term_options:
+                    selected = st.checkbox(term)
+                    if selected:
+                        local_selected_terms.append(term)
+
+                st.write("Selected Terms:", local_selected_terms)
+            submit = st.form_submit_button("Submit")
+            st.text(submit)
+
+            myBusiness.terms = selected_terms
+    else:
+        selected_terms = []
+        isNonprofit = st.selectbox(
+            "Is your organization a nonprofit",
+            (
+                "Yes",
+                "No",
+            ),
+        )
+
+        if isNonprofit == "Yes":
+            nonProfitType = st.selectbox(
+                "What type of nonprofit are you making?",
+                (
+                    "Religious",
+                    "public-benefit",
+                ),
+            )
+            selected_terms.append("non-profit")
+            selected_terms.append(nonProfitType)
+
+        if isNonprofit == "No":
+            local_selected_terms = []
+
+            term_options = [
+                "operating-agreement",
+                "manager-managed",
+                "member-managed",
+                "board",
+                "partnership-agreement",
+                "partnership",
+                "limited-partner",
+                "stock",
+                "informal",
+                "small business partnership",
+                "family",
+                "restrict-resignation",
+                "restrict-transferable-interests-assets",
+                "transferable-interests-assets",
+                "mutual-benefit",
+                "public-benefit",
+                "restrict-dissolution",
+                "liable-partner",
+                "automated-management",
+                "smart-contract",
+                "restrict-return-capital-contributions",
+                "blockchain",
+            ]
+
+            st.write("Select the terms you want to classify:")
+            for term in term_options:
+                selected = st.checkbox(term)
+                if selected:
+                    local_selected_terms.append(term)
+
+            st.write("Selected Terms:", local_selected_terms)
+
+
+def Form():
+    st.title("Questionnaire")
+    st.text("Please fill out the following form")
+
+    with st.form("alex"):
+        myBusiness.name = st.text_input("What is the name of your business?")
+        myBusiness.address = st.text_input("What's your physical business address?")
+        myBusiness.has_ip = st.text_input(
+            "Does your business own any intellectual property?"
+        )
+        myBusiness.explanation = st.text_input(
+            "Please explain what your business will do."
+        )
+        myBusiness.goals = st.text_input("What are the goals of your business?")
+        myBusiness.business_type = st.selectbox(
+            "What type of business would you like to form",
+            (
+                "Select one",
+                "LLC",
+                "S-CORP",
+                "C-CORP",
+                "501c3",
+                "Sole Proprietorship",
+                "Unsure",
+            ),
+        )
+        business_type = myBusiness.business_type
+        if business_type == "C-CORP":
+            ccorp_type = st.selectbox(
+                "Is your C-CORP a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
+            )
+            if ccorp_type == "Multi-Member":
+                st.header("Type Stakeholders' names & percentage of the company")
+                myBusiness.addManager(st.text_input("Person 1"))
+                myBusiness.addManager(st.text_input("Person 2"))
+                myBusiness.addManager(st.text_input("Person 3"))
+                myBusiness.addManager(st.text_input("Person 4"))
+        if business_type == "S-CORP":
+            scorp_type = st.selectbox(
+                "Is your S-CORP a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
+            )
+            if scorp_type == "Multi-Member":
+                st.header("Type Stakeholders' names & percentage of the company")
+                myBusiness.addManager(st.text_input("Person 1"))
+                myBusiness.addManager(st.text_input("Person 2"))
+                myBusiness.addManager(st.text_input("Person 3"))
+                myBusiness.addManager(st.text_input("Person 4"))
+        if business_type == "501c3":
+            st.header(
+                "Please declare all members on your board of directors (3 minimum)"
+            )
+            myBusiness.addManager(st.text_input("Person 1"))
+            myBusiness.addManager(st.text_input("Person 2"))
+            myBusiness.addManager(st.text_input("Person 3"))
+            myBusiness.addManager(st.text_input("Person 4"))
+        if business_type == "LLC":
+            llc_type = st.selectbox(
+                "Is your LLC a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
+            )
+            if llc_type == "Multi-Member":
+                st.text("Type Stakeholders' names & percentage of the company")
+                myBusiness.addManager(st.text_input("Person 1"))
+                myBusiness.addManager(st.text_input("Person 2"))
+                myBusiness.addManager(st.text_input("Person 3"))
+                myBusiness.addManager(st.text_input("Person 4"))
+
+        st.form_submit_button("Submit")
+
+        if business_type == "Unsure":
+            setUpWizard(False)
+
+
+def Chat():
     def bot_response(user_message):
         if "[Download PDF]" in user_message:
             pdf_url = user_message.split("](", 1)[1].split(")", 1)[0]
@@ -63,8 +302,9 @@ if selected_page == "Chat":
 
     for message in st.session_state.chat_history:
         chat_container.write(message)
-elif selected_page == "Dashboard":
-    user_business_type = "LLC"
+
+
+def Dashboard():
     data = {
         "Company Name": [
             "Company A",
@@ -145,153 +385,27 @@ elif selected_page == "Dashboard":
             download_pdf(pdf_data, "Certificate of Good Standing"),
             unsafe_allow_html=True,
         )
-elif selected_page == "Form":
-    st.title("Questionnaire")
-    st.text("Please fill out the following form")
 
-    pages_name = ["Form", "LLC", "S-corp", "C-Corp", "501c3"]
-    selected_page = "Form"
-    with st.form("alex"):
-        isConverge = False
-        name = st.text_input("What is the name of your business?")
-        address = st.text_input("What's your physical business address?")
-        has_ip = st.text_input("Does your business own any intellectual property?")
-        explanation = st.text_input("Please explain what your business will do.")
-        goals = st.text_input("What are the goals of your business?")
-        business_type = st.selectbox(
-            "What type of business would you like to form",
-            (
-                "Select one",
-                "LLC",
-                "S-CORP",
-                "C-CORP",
-                "501c3",
-                "Sole Proprietorship",
-                "Unsure",
-            ),
+
+def pageConditional():
+    page_names = ["Home", "Chat", "Dashboard", "Form", "Setup Wizard"]
+    selected_page = "Home"
+
+    if selected_page == "Home":
+        st.write(
+            '<div style="display: flex; justify-content: center;">',
+            unsafe_allow_html=True,
         )
+        selected_page = st.selectbox("Select a page:", page_names, key="select_page")
+    if selected_page == "Chat":
+        Chat()
+    elif selected_page == "Dashboard":
+        Dashboard()
+    elif selected_page == "Form":
+        Form()
+    elif selected_page == "Setup Wizard":
+        setUpWizard(True)
 
-        if business_type == "C-CORP":
-            ccorp_type = st.selectbox(
-                "Is your C-CORP a multi-member or single member",
-                ("Select one", "Single-Member", "Multi-Member"),
-            )
-            if ccorp_type == "Single-Member":
-                isConverge = True
-            elif ccorp_type == "Multi-Member":
-                st.header("Type Stakeholders' names & percentage of the company")
-                person_1 = st.text_input("Person 1")
-                person_2 = st.text_input("Person 2")
-                person_3 = st.text_input("Person 3")
-                person_4 = st.text_input("Person 4")
-        if business_type == "S-CORP":
-            scorp_type = st.selectbox(
-                "Is your S-CORP a multi-member or single member",
-                ("Select one", "Single-Member", "Multi-Member"),
-            )
-            if scorp_type == "Single-Member":
-                isConverge = True
-            elif scorp_type == "Multi-Member":
-                st.header("Type Stakeholders' names & percentage of the company")
-                person_1 = st.text_input("Person 1")
-                person_2 = st.text_input("Person 2")
-                person_3 = st.text_input("Person 3")
-                person_4 = st.text_input("Person 4")
-        if business_type == "501c3":
-            st.header(
-                "Please declare all members on your board of directors (3 minimum)"
-            )
-            person_1 = st.text_input("Person 1")
-            person_2 = st.text_input("Person 2")
-            person_3 = st.text_input("Person 3")
-            person_4 = st.text_input("Person 4")
-            isConverge = True
-        if business_type == "LLC":
-            llc_type = st.selectbox(
-                "Is your LLC a multi-member or single member",
-                ("Select one", "Single-Member", "Multi-Member"),
-            )
-            if llc_type == "Single-Member":
-                isConverge = True
-            elif llc_type == "Multi-Member":
-                st.text("Type Stakeholders' names & percentage of the company")
-                person_1 = st.text_input("Person 1")
-                person_2 = st.text_input("Person 2")
-                person_3 = st.text_input("Person 3")
-                person_4 = st.text_input("Person 4")
-        if business_type == "Unsure":
-            selected_page = "Setup Wizard"
 
-        st.form_submit_button("Submit")
-elif selected_page == "Setup Wizard":
-    st.title("Setup Wizard")
-    st.text("Please fill out the following form")
-
-    all_business_types = ["LLC", "S-CORP", "C-CORP", "501c3", "Sole Propetiership"]
-    optimal_business_type = "To be determined"
-    selected_type = st.selectbox(
-        "Select Business Type",
-        [optimal_business_type]
-        + [type for type in all_business_types if type != optimal_business_type],
-    )
-    st.write(f"Selected Business Type: {selected_type}")
-
-    with st.form("wizard"):
-        selected_terms = []
-        isNonProfit = "No"
-        isNonprofit = st.selectbox(
-            "Is your organization a nonprofit",
-            (
-                "Yes",
-                "No",
-            ),
-        )
-
-        if isNonprofit == "Yes":
-            nonProfitType = st.selectbox(
-                "What type of nonprofit are you making?",
-                (
-                    "Religious",
-                    "public-benefit",
-                ),
-            )
-            selected_terms.append("non-profit")
-            selected_terms.append(nonProfitType)
-
-        if isNonprofit == "No":
-            local_selected_terms = []
-
-            term_options = [
-                "operating-agreement",
-                "manager-managed",
-                "member-managed",
-                "board",
-                "partnership-agreement",
-                "partnership",
-                "limited-partner",
-                "stock",
-                "informal",
-                "small business partnership",
-                "family",
-                "restrict-resignation",
-                "restrict-transferable-interests-assets",
-                "transferable-interests-assets",
-                "mutual-benefit",
-                "public-benefit",
-                "restrict-dissolution",
-                "liable-partner",
-                "automated-management",
-                "smart-contract",
-                "restrict-return-capital-contributions",
-                "blockchain",
-            ]
-
-            st.write("Select the terms you want to classify:")
-            for term in term_options:
-                selected = st.checkbox(term)
-                if selected:
-                    local_selected_terms.append(term)
-
-            st.write("Selected Terms:", local_selected_terms)
-
-        submit = st.form_submit_button("Submit")
+myBusiness = Business()
+pageConditional()
