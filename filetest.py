@@ -146,39 +146,83 @@ elif selected_page == "Dashboard":
             unsafe_allow_html=True,
         )
 elif selected_page == "Form":
-    st.title("Questionaire")
+    st.title("Questionnaire")
     st.text("Please fill out the following form")
 
-    pages_name = "Form", "LLC", "S-corp", "C-Corp", "501c3"
+    pages_name = ["Form", "LLC", "S-corp", "C-Corp", "501c3"]
     selected_page = "Form"
+    with st.form("alex"):
+        isConverge = False
+        name = st.text_input("What is the name of your business?")
+        address = st.text_input("What's your physical business address?")
+        has_ip = st.text_input("Does your business own any intellectual property?")
+        explanation = st.text_input("Please explain what your business will do.")
+        goals = st.text_input("What are the goals of your business?")
+        business_type = st.selectbox(
+            "What type of business would you like to form",
+            (
+                "Select one",
+                "LLC",
+                "S-CORP",
+                "C-CORP",
+                "501c3",
+                "Sole Proprietorship",
+                "Unsure",
+            ),
+        )
 
-    if selected_page == "Form":
-        with st.form("alex"):
-            name = st.text_input("What is the name of your business?")
-            address = st.text_input("What's your physical business address?")
-            has_ip = st.text_input("Does your business own any intellectual property?")
-            business_type = st.selectbox(
-                "What type of business would you like to form?",
-                (
-                    "Select one",
-                    "LLC",
-                    "S-CORP",
-                    "C-CORP",
-                    "501c3",
-                    "Sole Proprietorship",
-                ),
+        if business_type == "C-CORP":
+            ccorp_type = st.selectbox(
+                "Is your C-CORP a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
             )
+            if ccorp_type == "Single-Member":
+                isConverge = True
+            elif ccorp_type == "Multi-Member":
+                st.header("Type Stakeholders' names & percentage of the company")
+                person_1 = st.text_input("Person 1")
+                person_2 = st.text_input("Person 2")
+                person_3 = st.text_input("Person 3")
+                person_4 = st.text_input("Person 4")
+        if business_type == "S-CORP":
+            scorp_type = st.selectbox(
+                "Is your S-CORP a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
+            )
+            if scorp_type == "Single-Member":
+                isConverge = True
+            elif scorp_type == "Multi-Member":
+                st.header("Type Stakeholders' names & percentage of the company")
+                person_1 = st.text_input("Person 1")
+                person_2 = st.text_input("Person 2")
+                person_3 = st.text_input("Person 3")
+                person_4 = st.text_input("Person 4")
+        if business_type == "501c3":
+            st.header(
+                "Please declare all members on your board of directors (3 minimum)"
+            )
+            person_1 = st.text_input("Person 1")
+            person_2 = st.text_input("Person 2")
+            person_3 = st.text_input("Person 3")
+            person_4 = st.text_input("Person 4")
+            isConverge = True
+        if business_type == "LLC":
+            llc_type = st.selectbox(
+                "Is your LLC a multi-member or single member",
+                ("Select one", "Single-Member", "Multi-Member"),
+            )
+            if llc_type == "Single-Member":
+                isConverge = True
+            elif llc_type == "Multi-Member":
+                st.text("Type Stakeholders' names & percentage of the company")
+                person_1 = st.text_input("Person 1")
+                person_2 = st.text_input("Person 2")
+                person_3 = st.text_input("Person 3")
+                person_4 = st.text_input("Person 4")
+        if business_type == "Unsure":
+            selected_page = "Setup Wizard"
 
-            if business_type == "C-CORP":
-                name = st.text_input("What is the name of your C-CORP?")
-
-            if business_type == "LLC":
-                business_type = st.selectbox(
-                    "Is your LLC a multi-member or single member?",
-                    ("Single-Member", "Multi-Member"),
-                )
-
-            submit = st.form_submit_button("Submit")
+        st.form_submit_button("Submit")
 elif selected_page == "Setup Wizard":
     st.title("Setup Wizard")
     st.text("Please fill out the following form")
