@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import os
 
 from alex import Alex
 from alex.components import setup
@@ -9,6 +10,9 @@ if "alex" not in st.session_state:
 
 if "finished_setup" not in st.session_state:
     st.session_state.finished_setup = False
+
+if "filled_form" not in st.session_state:
+    st.session_state.filled_form = False
 
 alex = st.session_state.alex
 
@@ -27,9 +31,27 @@ if st.session_state.current_page == "Setup":
     if not st.session_state.finished_setup:
         st.session_state.answers = setup(alex.setup_questions, alex)
     else:
-        st.write("You have already finished the setup process.")
-        st.write("Here are your answers:")
-        st.write(st.session_state.answers)
+        if not st.session_state.filled_form:
+            st.write("Please enter your information.")
+            form = alex.form
+            fields = form.fields
+            for field in fields:
+                if "Registered Agent" not in field and "RA" not in field:
+                    fields[field] = st.text_input(label=field)
+            if st.button("Submit"):
+                form.fields = fields
+                form.save()
+                st.session_state.filled_form = True
+        else:
+            st.write("Please review and sign your filled form.")
+            st.download_button(
+                label="Download Form",
+                data=alex.form.path,
+                file_name=os.path.basename(alex.form.path),
+                mime="application/pdf",
+            )
+            st.file_uploader(label="Upload Signed Form")
+
 
 if st.session_state.current_page == "Chat":
     if "messages" not in st.session_state:

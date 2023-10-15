@@ -3,8 +3,16 @@ from typing import Dict, List
 from chat import Chat
 from classify_entity import ClassifyEntity
 from classify_entity.entity import Entity
+from classify_entity.form import Form
 
-from .constants import DB_DIR, DOCS_DIR, ENTITY_JSON_PATH, FLAGS_JSON_PATH, URLS
+from .constants import (
+    DB_DIR,
+    DOCS_DIR,
+    ENTITY_JSON_PATH,
+    FLAGS_JSON_PATH,
+    URLS,
+    FORMS_DIR,
+)
 
 
 class Alex:
@@ -13,6 +21,8 @@ class Alex:
     _entity: Entity
     _chat: Chat
     _classifier: ClassifyEntity
+    _entity: Entity = None
+    _form: Form = None
 
     def __init__(self):
         """ """
@@ -83,6 +93,13 @@ class Alex:
     def entity(self) -> Entity:
         """ """
         return self._entity
+
+    @property
+    def form(self) -> Form:
+        """ """
+        if self._form is None and self._entity is not None:
+            self._form = Form(self._entity.docs, FORMS_DIR)
+        return self._form
 
     @entity.setter
     def entity(self, entity: Entity) -> None:
