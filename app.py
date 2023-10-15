@@ -9,6 +9,8 @@ import setUpWizard
 class Business:
     def __init__(self):
         self.name = ""
+        self.ownerFirstName = ""
+        self.ownerLastName = ""
         self.business_type = ""
         self.address = ""
         self.has_ip = ""
