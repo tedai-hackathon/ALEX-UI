@@ -64,10 +64,6 @@ def dashboard():
             pdf_data = file.read()
         download_pdf(pdf_data, "Filing Form")
 
-    if col2.button("  Bylaws  "):
-        with open("path_to_operating_agreement.pdf", "rb") as file:
-            pdf_data = file.read()
-        download_pdf(pdf_data, "Operating Agreement / Bylaws")
 
     if col3.button("  Certificate of Good Standing  "):
         with open("path_to_certificate_of_good_standing.pdf", "rb") as file:
