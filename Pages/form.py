@@ -1,4 +1,4 @@
-def Form():
+def form():
     st.title("Questionnaire")
     st.text("Please fill out the following form")
 
